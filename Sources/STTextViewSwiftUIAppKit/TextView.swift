@@ -132,16 +132,19 @@ private struct TextViewRepresentable: NSViewRepresentable {
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
         let textView = scrollView.documentView as! STTextView
 
-        if !context.coordinator.isUserEditing {
+        if !context.coordinator.isUserEditing && !context.coordinator.isUserSelecting {
             context.coordinator.isUpdating = true
             textView.attributedText = NSAttributedString(styledAttributedString(textView.typingAttributes))
             context.coordinator.isUpdating = false
         }
         context.coordinator.isUserEditing = false
 
-        if textView.textSelection != selection, let selection {
-            textView.textSelection = selection
+        if !context.coordinator.isUserSelecting {
+            if textView.textSelection != selection, let selection {
+                textView.textSelection = selection
+            }
         }
+        context.coordinator.isUserSelecting = false
 
         if textView.isEditable != isEnabled {
             textView.isEditable = isEnabled
@@ -212,6 +215,7 @@ private struct TextViewRepresentable: NSViewRepresentable {
         @Binding var selection: NSRange?
         var isUpdating = false
         var isUserEditing = false
+        var isUserSelecting = false
         var lastFont: NSFont?
 
         init(text: Binding<AttributedString>, selection: Binding<NSRange?>) {
@@ -231,6 +235,7 @@ private struct TextViewRepresentable: NSViewRepresentable {
             guard !isUpdating, let textView = notification.object as? STTextView else {
                 return
             }
+            isUserSelecting = true
 
             selection = textView.selectedRange()
         }

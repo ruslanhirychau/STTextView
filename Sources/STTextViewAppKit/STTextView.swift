@@ -1356,7 +1356,7 @@ open class STTextView: NSView, NSTextInput, NSTextContent, STTextViewProtocol {
             return nil
         }
 
-        let viewportRect = contentView.documentVisibleRect
+        let viewportRect = visibleRect
 
         // If the selection already intersects the viewport, no scroll needed
         if viewportRect.intersects(selectionRect) {

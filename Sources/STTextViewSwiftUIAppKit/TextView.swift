@@ -82,6 +82,7 @@ private struct TextViewRepresentable: NSViewRepresentable {
         textView.highlightSelectedLine = options.contains(.highlightSelectedLine)
         textView.isHorizontallyResizable = !options.contains(.wrapLines)
         textView.showsLineNumbers = options.contains(.showLineNumbers)
+        textView.showsInvisibleCharacters = options.contains(.showInvisibleCharacters)
         textView.textSelection = NSRange()
 
         if lineHeightMultiple != 1.0 {
@@ -164,12 +165,22 @@ private struct TextViewRepresentable: NSViewRepresentable {
             textView.isHorizontallyResizable = !options.contains(.wrapLines)
         }
 
+        if textView.highlightSelectedLine != options.contains(.highlightSelectedLine) {
+            textView.highlightSelectedLine = options.contains(.highlightSelectedLine)
+        }
+
+        if textView.showsInvisibleCharacters != options.contains(.showInvisibleCharacters) {
+            textView.showsInvisibleCharacters = options.contains(.showInvisibleCharacters)
+        }
+
         if textView.showsLineNumbers != options.contains(.showLineNumbers) {
             textView.showsLineNumbers = options.contains(.showLineNumbers)
             if options.contains(.showLineNumbers) {
                 textView.gutterView?.font = textView.font
                 textView.gutterView?.textColor = .secondaryLabelColor
             }
+            textView.sizeToFit()
+            textView.invalidateIntrinsicContentSize()
         }
 
         textView.needsLayout = true

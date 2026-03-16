@@ -26,6 +26,9 @@ public struct TextViewOptions: OptionSet, Sendable {
     /// Disable smart quote substitution (e.g., " to "").
     public static let disableSmartQuotes = TextViewOptions(rawValue: 1 << 3)
 
+    /// Display invisible characters (spaces, tabs, newlines).
+    public static let showInvisibleCharacters = TextViewOptions(rawValue: 1 << 9)
+
     // MARK: - iOS only options
 
     /// Disable automatic capitalization.

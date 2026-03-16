@@ -102,6 +102,7 @@ private struct TextViewRepresentable: UIViewRepresentable {
         textView.highlightSelectedLine = options.contains(.highlightSelectedLine)
         textView.isHorizontallyResizable = !options.contains(.wrapLines)
         textView.showsLineNumbers = options.contains(.showLineNumbers)
+        textView.showsInvisibleCharacters = options.contains(.showInvisibleCharacters)
 
         if lineHeightMultiple != 1.0 {
             let paragraphStyle = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
@@ -185,6 +186,16 @@ private struct TextViewRepresentable: UIViewRepresentable {
 
         if options.contains(.wrapLines) == textView.isHorizontallyResizable {
             textView.isHorizontallyResizable = !options.contains(.wrapLines)
+            textView.setNeedsLayout()
+        }
+
+        if textView.highlightSelectedLine != options.contains(.highlightSelectedLine) {
+            textView.highlightSelectedLine = options.contains(.highlightSelectedLine)
+            textView.setNeedsLayout()
+        }
+
+        if textView.showsInvisibleCharacters != options.contains(.showInvisibleCharacters) {
+            textView.showsInvisibleCharacters = options.contains(.showInvisibleCharacters)
             textView.setNeedsLayout()
         }
 

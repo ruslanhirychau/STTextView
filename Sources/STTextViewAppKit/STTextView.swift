@@ -1340,10 +1340,37 @@ open class STTextView: NSView, NSTextInput, NSTextContent, STTextViewProtocol {
         layoutText()
 
         if needsScrollToSelection, let textRange = textLayoutManager.textSelections.last?.textRanges.last {
-            scrollToVisible(textRange, type: .standard)
+            if let scrollLocation = textLocationForScrollingSelection(toVisible: textRange) {
+                scrollToVisible(scrollLocation, type: .standard)
+            }
         }
 
         needsScrollToSelection = false
+    }
+
+    /// Determines the optimal text location to scroll to for making a selection visible.
+    /// Returns nil if the selection is already visible, avoiding unnecessary scrolling.
+    /// When scrolling is needed, returns the nearest edge of the selection to minimize viewport disruption.
+    private func textLocationForScrollingSelection(toVisible textRange: NSTextRange) -> NSTextLocation? {
+        guard let selectionRect = textLayoutManager.textSegmentFrame(in: textRange, type: .standard) else {
+            return nil
+        }
+
+        let viewportRect = contentView.documentVisibleRect
+
+        // If the selection already intersects the viewport, no scroll needed
+        if viewportRect.intersects(selectionRect) {
+            return nil
+        }
+
+        // Scroll to the nearest edge of the selection
+        if selectionRect.minY < viewportRect.minY {
+            // Selection is above viewport — scroll to the start
+            return textRange.location
+        } else {
+            // Selection is below viewport — scroll to the end
+            return textRange.endLocation
+        }
     }
 
     /// Performs text layout including container sizing, viewport layout, and related updates.
